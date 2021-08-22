@@ -1,0 +1,43 @@
+storage: ./verdaccio/react-finland-storage
+
+web:
+  title: "React Finland 2021"
+  pkgManagers:
+    - yarn
+auth:
+  htpasswd:
+    file: ./htpasswd
+
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/ 
+
+packages:
+  # access sectiob for my design system
+  '@react-examples/*':
+    access: test
+    # $all
+    publish: test
+    unpublish: test
+    storage: private
+  '@*/*':
+    access: $all
+    publish: $all
+    unpublish: $authenticated
+    proxy: npmjs  
+    storage: public
+  '**':
+    access: $all
+    publish: $all
+    unpublish: $authenticated
+    proxy: npmjs
+    storage: public
+
+server:
+  keepAliveTimeout: 60
+
+middlewares:
+  audit:
+    enabled: true
+
+log: { type: stdout, format: pretty, level: warn }

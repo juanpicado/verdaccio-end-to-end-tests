@@ -1,0 +1,19 @@
+{
+  "name": "@react-examples/page",
+  "version": "1.0.9",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "yarn babel src/ --out-dir build/ --copy-files --extensions \".js\" --source-maps",
+    "prepublish": "yarn build"
+  },
+  "dependencies": {
+    "@react-examples/button": "^1.0.4"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.14.8"
+  },
+  "peerDependencies": {
+    "prop-types": "15.7.2",
+    "react": "17.0.2"
+  }
+}
