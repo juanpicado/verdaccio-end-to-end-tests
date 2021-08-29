@@ -5,14 +5,12 @@ const chalk = require('chalk');
 const path = require('path');
 const os = require('os');
 const fse = require('fs-extra');
-const detectFreePort = require('detect-port');
-const { rejects } = require('assert');
 
 const initRegistry = () => {
   const registryPath = require.resolve('./registry.js');
   const childProcess = spawn(process.execPath, [registryPath], {
     env: {
-      'DEBUG': 'e2e*, verdaccio*'
+      'DEBUG': 'e2e*'
     },
     stdio: 'inherit'
   });
@@ -45,21 +43,23 @@ function publishPackages(pkgs) {
 function getNpmChild(tmpdir, execArgs) {
   return new Promise((resolve) => {
     debug('execute npm script');
-    const child = spawn(process.execPath, execArgs, {cwd: tmpdir, stdio: 'inherit'});
+    const child = spawn(process.execPath, execArgs, {cwd: tmpdir, 
+      //stdio: 'inherit'
+    });
     child.on('spawn', () => {
       resolve(child);
     })
-    child.on('data', (data) => {
-      process.stdout.write(chalk.green(data.toString()));
-    })
+    // child.on('data', (data) => {
+    //   process.stdout.write(chalk.green(data.toString()));
+    // })
 
-    child.on('error', (error) => {
-      console.log('NEXT ERROR', error);
-    })
+    // child.on('error', (error) => {
+    //   console.log('NEXT ERROR', error);
+    // })
 
-    child.on('close', (code) => {
-      console.log(`NEXT child process exited with code ${code}`);
-    });
+    // child.on('close', (code) => {
+    //   console.log(`NEXT child process exited with code ${code}`);
+    // });
  
   })
 }
@@ -71,9 +71,9 @@ function executeNpm(tmpdir, execArgs) {
     child.on('spawn', () => {
       debug('npm has been spawn');
     })
-    child.on('data', (data) => {
-      process.stdout.write(chalk.green(data.toString()));
-    })
+    // child.on('data', (data) => {
+    //   process.stdout.write(chalk.green(data.toString()));
+    // })
 
     child.on('close', () => {
       debug(`npm script ${execArgs.join(' ')} done on ${tmpdir}`);
@@ -83,16 +83,17 @@ function executeNpm(tmpdir, execArgs) {
 }
 
 function executeYarn(tmpdir, execArgs) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, rejects) => {
    debug('execute yarn script on %s', tmpdir);
     const child = spawn('yarn', execArgs, {cwd: tmpdir, stdio: 'inherit'});
     child.on('spawn', () => {
       debug('yarn has been spawn');
     })
-    child.on('data', (data) => {
-      debug('yarn data %s', data?.toString())
-      process.stdout.write(chalk.green(data.toString()));
-    })
+
+    // child.on('data', (data) => {
+    //   debug('yarn data %s', data?.toString())
+    //   process.stdout.write(chalk.green(data.toString()));
+    // })
 
     child.on('error', (error) => {
       debug('yarn error script')
@@ -112,7 +113,6 @@ async function buildAndInstallApplication(tmpdir) {
   debug('app copied');
   await executeNpm(tmpdir, ['install', '--registry', 'http://localhost:5000']);
   await executeNpm(tmpdir, ['run', 'build'])
-  // const port = await detectFreePort(3000);
   const childServer = await getNpmChild(tmpdir, ['node_modules/.bin/next', 'start'])
   return childServer;
 }
@@ -124,11 +124,10 @@ async function runE2E() {
 
 (async function() {
   let registryChildProcess;
-  // const {fd, path, cleanup} = await tmpPromise.file();
   const tmpFolder = fse.mkdtempSync(path.join(os.tmpdir(), 'foo-'));  
   const cleanUpTemp = (origin) => {
     debug('cleaning tmp folder: %s', origin);
-    // fse.rmdirSync(tmpFolder, {recursive: true});
+    fse.rmdirSync(tmpFolder, {recursive: true});
   }
   try {    
     debug('temporal folder %s', tmpFolder);

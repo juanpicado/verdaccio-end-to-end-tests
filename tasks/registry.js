@@ -10,15 +10,13 @@ const initiRegistry = (port) => {
   return new Promise((resolve) => {
     const tmpFolder = fse.mkdtempSync(path.join(os.tmpdir(), 'e2e-registry-')); 
     debug('temp registry folder %s', tmpFolder) 
-    const cache = path.join(__dirname, '..', 'verdaccio', 'verdaccio');
-    console.log('cache:', cache);
     const originCopyFile =  path.normalize(path.join(__dirname, '../', 'verdaccio', 'verdaccio.yaml'));
     const verdaccioConfigFile = path.join(tmpFolder, 'verdaccio.yaml');
     fse.copySync(originCopyFile, verdaccioConfigFile)
     const storagePath = path.join(path.dirname(verdaccioConfigFile), 'storage');
     fse.mkdirSync(storagePath);
-    console.log('verdaccioConfigFile:', verdaccioConfigFile);
-    console.log('verdaccioStoragePath:', storagePath);
+    debug('verdaccioConfigFile: %s', verdaccioConfigFile);
+    debug('verdaccioStoragePath: %s', storagePath);
     const configAsObject = yaml.load(fse.readFileSync(verdaccioConfigFile, 'utf8'));
     const config = {
       ...configAsObject,
@@ -34,7 +32,7 @@ const initiRegistry = (port) => {
       });
     }
     debug('startVerdaccioServer');
-    startVerdaccioServer(config, 6000, cache, '1.0.0', 'verdaccio', onReady);
+    startVerdaccioServer(config, 6000, storagePath, '1.0.0', 'verdaccio', onReady);
   });
 };
 

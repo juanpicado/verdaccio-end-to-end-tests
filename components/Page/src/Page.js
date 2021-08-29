@@ -4,7 +4,7 @@ export const Page = () => (
   <>
     <main>
       <h1 className="title" data-testid="title">
-        Welcome to <a href="https://nextjs.org">Next.js!</a>
+        Welcome to <a href="https://nextjs.org">React Finland 2021!</a>
       </h1>
 
       <p className="description">
@@ -12,33 +12,33 @@ export const Page = () => (
       </p>
 
       <div className="grid">
-        <a href="https://nextjs.org/docs" className="card" data-testid="card1">
-          <h3>Documentation &rarr;</h3>
-          <p>Find in-depth information about Next.js features and API.</p>
+        <a href="https://react-finland.fi/schedule/" className="card" data-testid="card1">
+          <h3>Schedule &rarr;</h3>
+          <p>React Finland 2021 will take place between 30th of August and 3rd of September.</p>
         </a>
 
-        <a href="https://nextjs.org/learn" className="card" data-testid="card2">
-          <h3>Learn &rarr;</h3>
-          <p>Learn about Next.js in an interactive course with quizzes!</p>
+        <a href="https://react-finland.fi/speakers" className="card" data-testid="card2">
+          <h3>Speakers &rarr;</h3>
+          <p>The sessions take ~1.5h and there's a 15 minute slot to demo and present for each speaker!</p>
         </a>
 
         <a
-          href="https://github.com/vercel/next.js/tree/master/examples"
+          href="https://react-finland.fi/workshops/"
           className="card"
           data-testid="card3"
         >
-          <h3>Examples &rarr;</h3>
-          <p>Discover and deploy boilerplate example Next.js projects.</p>
+          <h3>Workshops &rarr;</h3>
+          <p>All the workshops take place online.</p>
         </a>
 
         <a
-          href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+          href="https://react-finland.fi/for-attendees/"
           className="card"
           data-testid="card4"
         >
-          <h3>Deploy &rarr;</h3>
+          <h3>For Attendees &rarr;</h3>
           <p>
-            Instantly deploy your Next.js site to a public URL with Vercel.
+           Welcome to React Finland 2021
           </p>
         </a>
       </div>
@@ -90,8 +90,7 @@ export const Page = () => (
           border-radius: 5px;
           padding: 0.75rem;
           font-size: 1.1rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
-            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+          font-family: Arial;
         }
 
         .grid {
