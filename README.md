@@ -1,10 +1,8 @@
-# React Finland 2021
+# End To End Testing with Verdaccio
 
 ```
 
 ```
-
-
 
 ### Publish all packages
 

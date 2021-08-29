@@ -1,4 +1,4 @@
-describe('My Vercel Page Test', () => {
+describe('My Application', () => {
   beforeEach(() => {
     cy.viewport(1280, 720); 
     cy.visit('http://localhost:3000');

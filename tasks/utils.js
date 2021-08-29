@@ -1,5 +1,4 @@
 const {execSync, spawn} = require('child_process');
-const kill  = require('tree-kill');
 const debug = require('debug')('e2e');
 const chalk = require('chalk');
 const path = require('path');
@@ -12,7 +11,7 @@ const initRegistry = () => {
     env: {
       'DEBUG': 'e2e*'
     },
-    stdio: 'inherit'
+    stdio: 'ignore'
   });
   return childProcess;
 }
