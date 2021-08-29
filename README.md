@@ -1,17 +1,13 @@
 # End To End Testing with Verdaccio
 
-```
+1. Install packages
 
 ```
-
-### Publish all packages
-
-```
-yarn workspaces foreach npm publish
+yarn
 ```
 
-### Upgrade versions
+2. Run e2e
 
 ```
-yarn workspaces foreach npm publish
+yarn node tasks/index.js
 ```

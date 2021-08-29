@@ -6,6 +6,11 @@ const yaml = require('js-yaml');
 const fse = require('fs-extra');
 const path = require('path');
 
+/**
+ * Initialize a registry in a temporary folder.
+ * @param {*} port 
+ * @returns 
+ */
 const initiRegistry = (port) => {
   return new Promise((resolve) => {
     const tmpFolder = fse.mkdtempSync(path.join(os.tmpdir(), 'e2e-registry-')); 
@@ -25,7 +30,7 @@ const initiRegistry = (port) => {
     }
 
     const onReady = (webServer) => {
-      console.log('verdaccio port', port);
+      debug('verdaccio port %s', port);
       webServer.listen(port, () => {
         resolved = true;
         resolve(webServer);

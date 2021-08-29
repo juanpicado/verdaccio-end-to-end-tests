@@ -15,7 +15,7 @@ let childApp;
 
 (async function() {
 
-  const tmpFolder = createTempFolder('foo-');  
+  const tmpFolder = createTempFolder('e2e-app-');  
   try {
     
     // 1. initialize the registry
@@ -47,5 +47,5 @@ let childApp;
     registryChildProcess.kill();
     kill(childApp.pid);    
   });
-  
+
 })();
