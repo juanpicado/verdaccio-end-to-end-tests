@@ -1,58 +1,149 @@
 import React from 'react';
-import Button from '@react-examples/button';
-
-import './page.css';
 
 export const Page = () => (
-  <article>
-    <section>
-      <h2>React Finland 2021</h2>
-      <p>
-        We recommend building UIs with a{' '}
-        <a href="https://componentdriven.org" target="_blank" rel="noopener noreferrer">
-          <strong>component-driven</strong>
-        </a>{' '}
-        process starting with atomic components and ending with pages.
+  <>
+    <main>
+      <h1 className="title" data-testid="title">
+        Welcome to <a href="https://nextjs.org">Next.js!</a>
+      </h1>
+
+      <p className="description">
+        Get started by editing <code>pages/index.js</code>
       </p>
-      <p>
-        Render pages with mock data. This makes it easy to build and review page states without
-        needing to navigate to them in your app. Here are some handy patterns for managing page data
-        in Storybook:
-      </p>
-      <ul>
-        <li>
-          Use a higher-level connected component. Storybook helps you compose such data from the
-          "args" of child component stories
-        </li>
-        <li>
-          Assemble data in the page component from your services. You can mock these services out
-          using Storybook.
-        </li>
-      </ul>
-      <p>
-        Get a guided tutorial on component-driven development at{' '}
-        <a href="https://storybook.js.org/tutorials/" target="_blank" rel="noopener noreferrer">
-          Storybook tutorials
+
+      <div className="grid">
+        <a href="https://nextjs.org/docs" className="card" data-testid="card1">
+          <h3>Documentation &rarr;</h3>
+          <p>Find in-depth information about Next.js features and API.</p>
         </a>
-        . Read more in the{' '}
-        <a href="https://storybook.js.org/docs" target="_blank" rel="noopener noreferrer">
-          docs
+
+        <a href="https://nextjs.org/learn" className="card" data-testid="card2">
+          <h3>Learn &rarr;</h3>
+          <p>Learn about Next.js in an interactive course with quizzes!</p>
         </a>
-        .
-      </p>
-      <div className="tip-wrapper">
-        <span className="tip">Tip</span> Adjust the width of the canvas with the{' '}
-        <svg width="10" height="10" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
-          <g fill="none" fillRule="evenodd">
-            <path
-              d="M1.5 5.2h4.8c.3 0 .5.2.5.4v5.1c-.1.2-.3.3-.4.3H1.4a.5.5 0 01-.5-.4V5.7c0-.3.2-.5.5-.5zm0-2.1h6.9c.3 0 .5.2.5.4v7a.5.5 0 01-1 0V4H1.5a.5.5 0 010-1zm0-2.1h9c.3 0 .5.2.5.4v9.1a.5.5 0 01-1 0V2H1.5a.5.5 0 010-1zm4.3 5.2H2V10h3.8V6.2z"
-              id="a"
-              fill="#999"
-            />
-          </g>
-        </svg>
-        Viewports addon in the toolbar
+
+        <a
+          href="https://github.com/vercel/next.js/tree/master/examples"
+          className="card"
+          data-testid="card3"
+        >>>
+          <h3>Examples &rarr;</h3>
+          <p>Discover and deploy boilerplate example Next.js projects.</p>
+        </a>
+
+        <a
+          href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+          className="card"
+          data-testid="card4"
+        >
+          <h3>Deploy &rarr;</h3>
+          <p>
+            Instantly deploy your Next.js site to a public URL with Vercel.
+          </p>
+        </a>
       </div>
-    </section>
-  </article>
+    </main>
+    <style jsx>{`
+        main {
+          padding: 5rem 0;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        }
+
+        a {
+          color: inherit;
+          text-decoration: none;
+        }
+
+        .title a {
+          color: #0070f3;
+          text-decoration: none;
+        }
+
+        .title a:hover,
+        .title a:focus,
+        .title a:active {
+          text-decoration: underline;
+        }
+
+        .title {
+          margin: 0;
+          line-height: 1.15;
+          font-size: 4rem;
+        }
+
+        .title,
+        .description {
+          text-align: center;
+        }
+
+        .description {
+          line-height: 1.5;
+          font-size: 1.5rem;
+        }
+
+        code {
+          background: #fafafa;
+          border-radius: 5px;
+          padding: 0.75rem;
+          font-size: 1.1rem;
+          font-family: Menlo, Monaco, Lucida Console, Liberation Mono,
+            DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+        }
+
+        .grid {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-wrap: wrap;
+
+          max-width: 800px;
+          margin-top: 3rem;
+        }
+
+        .card {
+          margin: 1rem;
+          flex-basis: 45%;
+          padding: 1.5rem;
+          text-align: left;
+          color: inherit;
+          text-decoration: none;
+          border: 1px solid #eaeaea;
+          border-radius: 10px;
+          transition: color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .card:hover,
+        .card:focus,
+        .card:active {
+          color: #0070f3;
+          border-color: #0070f3;
+        }
+
+        .card h3 {
+          margin: 0 0 1rem 0;
+          font-size: 1.5rem;
+        }
+
+        .card p {
+          margin: 0;
+          font-size: 1.25rem;
+          line-height: 1.5;
+        }
+
+        .logo {
+          height: 1em;
+        }
+
+        @media (max-width: 600px) {
+          .grid {
+            width: 100%;
+            flex-direction: column;
+          }
+        }
+      `}</style>
+  </>
 );

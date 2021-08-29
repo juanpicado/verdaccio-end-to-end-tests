@@ -15,9 +15,8 @@ uplinks:
 packages:
   # access sectiob for my design system
   '@react-examples/*':
-    access: test
-    # $all
-    publish: test
+    access: $all
+    publish: $all
     unpublish: test
     storage: private
   '@*/*':

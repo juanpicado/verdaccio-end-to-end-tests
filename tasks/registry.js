@@ -1,4 +1,5 @@
 const startVerdaccioServer = require('verdaccio').default;
+const debug = require('debug')('e2e:registry');
 const detectFreePort = require('detect-port');
 const yaml = require('js-yaml');
 const fs = require('fs');
@@ -23,7 +24,7 @@ const initiRegistry = (port) => {
         resolve(webServer);
       });
     }
-    console.log('-startVerdaccioServer', startVerdaccioServer);
+    debug('startVerdaccioServer');
     startVerdaccioServer(config, 6000, cache, '1.0.0', 'verdaccio', onReady);
   });
 };
@@ -34,6 +35,7 @@ const initiRegistry = (port) => {
     const port = await detectFreePort(5000);
     await initiRegistry(port);
   } catch (err) {
-    console.error('exec failed', err);
+    debug('registry failed');
+    console.error('exec failed registry', err);
   }
 })();

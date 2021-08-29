@@ -1,23 +1,27 @@
-const {execSync, spawn, exec} = require('child_process');
+const {execSync, spawn} = require('child_process');
+const kill  = require('tree-kill');
+const debug = require('debug')('e2e');
 const chalk = require('chalk');
 const path = require('path');
 const os = require('os');
 const fse = require('fs-extra');
+const detectFreePort = require('detect-port');
+const { rejects } = require('assert');
 
 const initRegistry = () => {
   const registryPath = require.resolve('./registry.js');
   const childProcess = spawn(process.execPath, [registryPath], {
-    // env: {
-    //   'DEBUG': 'verdaccio*'
-    // }
+    env: {
+      // 'DEBUG': 'verdaccio*'
+    }
   });
   return childProcess;
 }
 
 const waitOnRegistry = () => {
-  console.log(chalk.blue('waiting on registry ...'));
+  debug('waiting on registry ...');
   execSync('yarn wait-on http://localhost:5000');
-  console.log(chalk.blue('registry detected on por 5000'));
+  debug('registry detected on por 5000');
 }
 
 function workspacesPackagesList() {
@@ -29,113 +33,137 @@ function workspacesPackagesList() {
 
 function publishPackages(pkgs) {
   pkgs.forEach((pkg)=> {
+      debug('publishing ... %s', pkg.location);
       const cwdPkg = path.join(process.cwd(), pkg.location)
-      console.log('-->', cwdPkg)
+      debug('publish on cwd %s', cwdPkg);
       const output = execSync(`yarn npm publish --tolerate-republish`, {cwd: cwdPkg} )
-      console.log('-->', output.toString());
+      debug('publish package stdout %s', output);
   })
 }
 
 function getNpmChild(tmpdir, execArgs) {
   return new Promise((resolve) => {
-    console.log(chalk.red('execute npm script'));
-    const child = spawn('npm', execArgs, {cwd: tmpdir});
+    debug('execute npm script');
+    const child = spawn(process.execPath, execArgs, {cwd: tmpdir, stdio: 'inherit'});
     child.on('spawn', () => {
       resolve(child);
     })
     child.on('data', (data) => {
       process.stdout.write(chalk.green(data.toString()));
     })
+
+    child.on('error', (error) => {
+      console.log('NEXT ERROR', error);
+    })
+
+    child.on('close', (code) => {
+      console.log(`NEXT child process exited with code ${code}`);
+    });
  
   })
 }
 
 function executeNpm(tmpdir, execArgs) {
   return new Promise((resolve) => {
-    console.log(chalk.red('execute npm script'));
-    const child = spawn('npm', execArgs, {cwd: tmpdir});
+   debug('execute npm script');
+    const child = spawn('npm', execArgs, {cwd: tmpdir, stdio: 'inherit'});
     child.on('spawn', () => {
-      console.log(chalk.whiteBright('npm has been spawn'));
+      debug('npm has been spawn');
     })
     child.on('data', (data) => {
       process.stdout.write(chalk.green(data.toString()));
     })
 
     child.on('close', () => {
-      console.log(chalk.red(`npm script ${execArgs.join(' ')} done on ${tmpdir}`));
+      debug(`npm script ${execArgs.join(' ')} done on ${tmpdir}`);
       resolve();
     })
   })
 }
 
-async function buildAndInstallApplication(tmpdir) {
-  
+function executeYarn(tmpdir, execArgs) {
+  return new Promise((resolve) => {
+   debug('execute yarn script on %s', tmpdir);
+    const child = spawn('yarn', execArgs, {cwd: tmpdir, stdio: 'inherit'});
+    child.on('spawn', () => {
+      debug('yarn has been spawn');
+    })
+    child.on('data', (data) => {
+      debug('yarn data %s', data?.toString())
+      process.stdout.write(chalk.green(data.toString()));
+    })
+
+    child.on('error', (error) => {
+      debug('yarn error script')
+      process.stdout.write(chalk.green(data.toString()));
+      rejects(error);
+    })
+
+    child.on('close', () => {
+      debug(`yarn script ${execArgs.join(' ')} done on ${tmpdir}`);
+      resolve();
+    })
+  })
+}
+
+async function buildAndInstallApplication(tmpdir) {  
   fse.copySync(path.join(process.cwd(), 'test-app'), tmpdir);
-  console.log(chalk.cyan('app copied'));
+  debug('app copied');
   await executeNpm(tmpdir, ['install', '--registry', 'http://localhost:5000']);
   await executeNpm(tmpdir, ['run', 'build'])
-  const childServer = await getNpmChild(tmpdir, ['start'])
+  // const port = await detectFreePort(3000);
+  const childServer = await getNpmChild(tmpdir, ['node_modules/.bin/next', 'start'])
   return childServer;
 }
 
-/**
- * Group 1 (run-server.js)
- * 1. Ejecutar el registry (process correr en paralelo).
- * 2. Wait on puerto registry 
- * 
- * Group 2 (run-e2e.js)
- * 3. Instalar unos paquetes en un registry. 
- * 4. Install de los paquetes de la aplicacion.
- * 
- * 5.0 Copiar build en temporal folder.
- * 5.1. Hacer build de la aplication.
- * 6. Levantar un server con la aplicacion
- * 7. Ejecutar E2E a aplicacion. *Cypress*)
- * 
- * 9. Apagar el registry (1)
- * 10. Apagar el server. (6)
- * 
- */
- 
+async function runE2E() {  
+  debug('run e2e cypress');
+  await executeYarn(process.cwd(),['e2e:run']);
+}
+
 (async function() {
-  let child;
+  let registryChildProcess;
   // const {fd, path, cleanup} = await tmpPromise.file();
   const tmpFolder = fse.mkdtempSync(path.join(os.tmpdir(), 'foo-'));  
   const cleanUpTemp = (origin) => {
-    console.log(chalk.yellowBright('cleaning tmp folder:'), origin);
+    debug('cleaning tmp folder: %s', origin);
     // fse.rmdirSync(tmpFolder, {recursive: true});
   }
   try {    
-    console.log('temporal folder', chalk.magenta(tmpFolder));
-    child = await initRegistry();
-    child.stdout.on('data', (data) => {
+    debug('temporal folder %s', tmpFolder);
+    registryChildProcess = await initRegistry();
+    registryChildProcess.stdout.on('data', (data) => {
       process.stdout.write(chalk.blue(data))
     });
 
-    child.stderr.on('data', (data) => {
+    registryChildProcess.stderr.on('data', (data) => {
       process.stdout.write(chalk.yellow(data))
     });
     waitOnRegistry();
     publishPackages(workspacesPackagesList())
     const childApp = await buildAndInstallApplication(tmpFolder);
-    console.log(chalk.greenBright('running e2e cypress'));
+    await runE2E();    
+    childApp.kill();
+    registryChildProcess.kill();
+    cleanUpTemp('end');
     process.on('SIGINT', () => {
-      console.log(chalk.red('killing registry'));
-      child.kill();
-      console.log(chalk.red('killing app'));
-      childApp.kill();
-      console.log(chalk.red('all apps killed'));
+      debug('killing registry');
+      registryChildProcess.kill();
+      debug('killing app');
+      // childApp.stdin.pause();
+      kill(childApp.pid);
+      debug('all apps killed');
     });
- 
-    // cleanUpTemp('end');
   } catch (err) {
+    console.error('error on execute', err);
     cleanUpTemp('catch');
-    console.error('exec failed', err);
+    debug('exec failed %s', err);
+    registryChildProcess.kill();
   }
 
   process.on('SIGINT', () => {
     cleanUpTemp('signint');
-    console.log(chalk.red('killing registry'));
-    child.kill();
+    debug('killing registry');
+    registryChildProcess.kill();
   });
 })();
