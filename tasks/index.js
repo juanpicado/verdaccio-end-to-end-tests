@@ -49,6 +49,6 @@ let childApp;
     kill(childApp.pid);    
   });
 
-  process.exit(0);
+  process.exit(0); 
 
 })();
