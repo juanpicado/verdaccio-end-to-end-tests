@@ -100,8 +100,8 @@ function executeYarn(tmpdir, execArgs) {
       rejects(error);
     })
 
-    child.on('close', () => {
-      debug(`yarn script ${execArgs.join(' ')} done on ${tmpdir}`);
+    child.on('close', (code) => {
+      debug(`yarn script ${execArgs.join(' ')} done on ${tmpdir} code ${code}`);
       resolve();
     })
   })
