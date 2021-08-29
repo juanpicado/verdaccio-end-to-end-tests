@@ -102,7 +102,11 @@ function executeYarn(tmpdir, execArgs) {
 
     child.on('close', (code) => {
       debug(`yarn script ${execArgs.join(' ')} done on ${tmpdir} code ${code}`);
-      resolve();
+      if (code === 0) {
+        return resolve();
+      } else {
+        return rejects(new Error(`e2e has failed with code ${code}`));
+      }
     })
   })
 }
