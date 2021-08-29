@@ -26,7 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'yarn'    
-    - name: install
+    - name: yarn install
       run: yarn
     - name: e2e
       run: DEBUG=e2e* yarn node tasks/index.js
