@@ -100,9 +100,13 @@ function executeYarn(tmpdir, execArgs) {
       rejects(error);
     })
 
-    child.on('close', () => {
-      debug(`yarn script ${execArgs.join(' ')} done on ${tmpdir}`);
-      resolve();
+    child.on('close', (code) => {
+      debug(`yarn script ${execArgs.join(' ')} done on ${tmpdir} code ${code}`);
+      if (code === 0) {
+        return resolve();
+      } else {
+        return rejects(new Error(`e2e has failed with code ${code}`));
+      }
     })
   })
 }

@@ -36,10 +36,11 @@ let childApp;
     childApp.kill();
     registryChildProcess.kill();
     // clean up folder
-    cleanUpTemp('end', tmpFolder);
+    cleanUpTemp('end', tmpFolder);    
   } catch (err) {
     cleanUpTemp('catch', tmpFolder);
     registryChildProcess.kill();
+    process.exit(1);
   }
 
   process.on('SIGINT', () => {
@@ -47,5 +48,7 @@ let childApp;
     registryChildProcess.kill();
     kill(childApp.pid);    
   });
+
+  process.exit(0); 
 
 })();
