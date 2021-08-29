@@ -1,7 +1,7 @@
 {
   "name": "@react-examples/page",
   "version": "1.0.12",
-  "main": "build/index.js",
+  "main": "build/app.js",
   "scripts": {
     "build": "yarn babel src/ --out-dir build/ --copy-files",
     "prepublish": "yarn build"
