@@ -25,7 +25,8 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'yarn'
-    - run: yarn
-    #- run: npm run build --if-present
-    #- run: npm test
+        cache: 'yarn'    
+    - name: install
+      run: yarn
+    - name: e2e
+      run: DEBUG=e2e* yarn node tasks/index.js
