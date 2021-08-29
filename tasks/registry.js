@@ -1,20 +1,29 @@
 const startVerdaccioServer = require('verdaccio').default;
 const debug = require('debug')('e2e:registry');
 const detectFreePort = require('detect-port');
+const os = require('os');
 const yaml = require('js-yaml');
-const fs = require('fs');
+const fse = require('fs-extra');
 const path = require('path');
 
 const initiRegistry = (port) => {
   return new Promise((resolve) => {
+    const tmpFolder = fse.mkdtempSync(path.join(os.tmpdir(), 'e2e-registry-')); 
+    debug('temp registry folder %s', tmpFolder) 
     const cache = path.join(__dirname, '..', 'verdaccio', 'verdaccio');
     console.log('cache:', cache);
-    const verdaccioConfigFile = path.normalize(path.join(__dirname, '../', 'verdaccio', 'verdaccio.yaml'));
+    const originCopyFile =  path.normalize(path.join(__dirname, '../', 'verdaccio', 'verdaccio.yaml'));
+    const verdaccioConfigFile = path.join(tmpFolder, 'verdaccio.yaml');
+    fse.copySync(originCopyFile, verdaccioConfigFile)
+    const storagePath = path.join(path.dirname(verdaccioConfigFile), 'storage');
+    fse.mkdirSync(storagePath);
     console.log('verdaccioConfigFile:', verdaccioConfigFile);
-    const configAsObject = yaml.load(fs.readFileSync(verdaccioConfigFile, 'utf8'));
+    console.log('verdaccioStoragePath:', storagePath);
+    const configAsObject = yaml.load(fse.readFileSync(verdaccioConfigFile, 'utf8'));
     const config = {
       ...configAsObject,
-      self_path: cache,
+      storage: storagePath,
+      self_path: tmpFolder,
     }
 
     const onReady = (webServer) => {

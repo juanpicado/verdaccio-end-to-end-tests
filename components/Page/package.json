@@ -6,6 +6,9 @@
     "build": "yarn babel src/ --out-dir build/ --copy-files",
     "prepublish": "yarn build"
   },
+  "files": [
+    "/build"
+  ],
   "devDependencies": {
     "@babel/cli": "^7.14.8"
   },

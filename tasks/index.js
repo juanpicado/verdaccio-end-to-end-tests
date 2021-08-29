@@ -12,8 +12,9 @@ const initRegistry = () => {
   const registryPath = require.resolve('./registry.js');
   const childProcess = spawn(process.execPath, [registryPath], {
     env: {
-      // 'DEBUG': 'verdaccio*'
-    }
+      'DEBUG': 'e2e*, verdaccio*'
+    },
+    stdio: 'inherit'
   });
   return childProcess;
 }
@@ -132,13 +133,13 @@ async function runE2E() {
   try {    
     debug('temporal folder %s', tmpFolder);
     registryChildProcess = await initRegistry();
-    registryChildProcess.stdout.on('data', (data) => {
-      process.stdout.write(chalk.blue(data))
-    });
+    // registryChildProcess.stdout.on('data', (data) => {
+    //   process.stdout.write(chalk.blue(data))
+    // });
 
-    registryChildProcess.stderr.on('data', (data) => {
-      process.stdout.write(chalk.yellow(data))
-    });
+    // registryChildProcess.stderr.on('data', (data) => {
+    //   process.stdout.write(chalk.yellow(data))
+    // });
     waitOnRegistry();
     publishPackages(workspacesPackagesList())
     const childApp = await buildAndInstallApplication(tmpFolder);

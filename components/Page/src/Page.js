@@ -26,7 +26,7 @@ export const Page = () => (
           href="https://github.com/vercel/next.js/tree/master/examples"
           className="card"
           data-testid="card3"
-        >>>
+        >
           <h3>Examples &rarr;</h3>
           <p>Discover and deploy boilerplate example Next.js projects.</p>
         </a>
